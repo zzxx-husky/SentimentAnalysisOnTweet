@@ -13,7 +13,7 @@ class Cleaner:
         #     return None
         text = text.strip()
         # 1. remove all short links, e.g. https://t.co/CITaCdl8SU
-        text = re.sub(r'http[s]?://[\w.]+/[\w]+', '', text)
+        text = re.sub(r'http[s]?:/[\S]+', '', text)
         # 2. remove RT @user, e.g. RT @zzxx:
         text = re.sub(r'RT @[\w_]+:', '', text)
         text = re.sub(r'@[\w_]+', '', text)

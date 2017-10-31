@@ -5,8 +5,8 @@ from listener import Listener
 
 
 def consume(tweet):
+    print tweet
     print Cleaner.clean(tweet)
-    return True
 
 
 if __name__ == '__main__':
