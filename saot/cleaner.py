@@ -4,7 +4,7 @@ import re
 class Cleaner:
     @staticmethod
     def clean(tweet):
-        id, text = tweet.id, tweet.text
+        id, text = tweet.author.id_str, tweet.text
         # 0. handle non-english words: ignore
         # try:
         #     text.decode('ascii') # this may filter too many tweets
