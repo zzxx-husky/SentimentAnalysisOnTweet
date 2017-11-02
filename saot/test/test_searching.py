@@ -1,6 +1,6 @@
-from config import Config
-from downloader import Downloader
-from listener import Listener
+from saot.config import Config
+from saot.downloader import Downloader
+from saot.listener import Listener
 
 
 def printdata(tweet):

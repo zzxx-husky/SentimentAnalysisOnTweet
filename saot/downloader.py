@@ -16,7 +16,7 @@ class Downloader:
             while True:
                 try:
                     # start searching from the oldest tweets that can be achieved
-                    new_tweets = api.search(q=keywords, count=100, max_id=str(last_id))
+                    new_tweets = api.search(q=keywords, count=100, lang="en", max_id=str(last_id))
                     if len(new_tweets) > 0:
                         last_id = new_tweets[-1].id - 1
                         for i in new_tweets: listener.on_data(i)
