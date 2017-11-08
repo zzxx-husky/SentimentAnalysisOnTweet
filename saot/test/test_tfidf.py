@@ -1,5 +1,5 @@
-from saot import tfidf
 from saot import data_loader
+from saot import tfidf
 
 ds = data_loader.load_data("../../data/test.csv")
 ds.clean()

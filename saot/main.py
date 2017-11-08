@@ -1,14 +1,12 @@
+import cPickle as pk
+
 import numpy as np
-
-from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
+from sklearn.svm import LinearSVC
 
-from cleaner import Cleaner
-from config import Config
-from downloader import Downloader
-from listener import Listener
-from data_loader import *
 import tfidf
+from data_loader import *
+from sentiment140 import Sentiment140
 
 
 def consume(tweet):
@@ -17,8 +15,10 @@ def consume(tweet):
 
 if __name__ == '__main__':
     # Downloader(Config.parse("saot.config")).start_searching(["alphago zero"], Listener(consume))
-    ds = load_data('../data/training.1600000.processed.noemoticon.csv')
+    ds = load_data(Sentiment140().train_path)
     ds.clean()
+
+    pk.dump(ds, open('cleaned_ds.pkl', 'wb'))
 
     # 15% data for test
     data_train, data_test, y_train, y_test = train_test_split(ds.data, ds.target, test_size=0.15)

@@ -1,6 +1,5 @@
 from saot import data_loader
 
-
 ds = data_loader.load_data("../../data/test.csv")
 
 print ds.target
