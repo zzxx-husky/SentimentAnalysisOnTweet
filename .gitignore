@@ -102,4 +102,5 @@ ENV/
 
 *.iml
 .idea/*
-saot.config
+
+*.pkl

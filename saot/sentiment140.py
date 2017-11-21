@@ -1,11 +1,13 @@
 import os
-import subprocess
+import sys
+import urllib
+import zipfile
 
-mkdir = lambda dir: subprocess.call(["mkdir", dir]) == 0
+mkdir = os.makedirs
 hasdir = os.path.isdir
 hasfile = os.path.exists
-hascmd = lambda cmd: len(subprocess.check_output(["which", cmd])) != 0
-rmfile = lambda file: subprocess.call(["rm", file])
+rmfile = os.remove
+download = urllib.request.urlretrieve if sys.version[0] == 3 else urllib.urlretrieve
 
 
 class Sentiment140:
@@ -16,19 +18,21 @@ class Sentiment140:
         train = "training.1600000.processed.noemoticon.csv"
         test = "testdata.manual.2009.06.14.csv"
         if not hasdir(dir):
-            if not mkdir(dir) or not hasdir(dir):
+            mkdir(dir)
+            if not hasdir(dir):
                 raise Exception("Failed to create directory: " + dir)
+        cur_dir = os.getcwd()
         os.chdir(dir)
         if not hasfile(train) or not hasfile(test):
             if not hasfile(arc):
-                if not hascmd("wget"):
-                    raise Exception("Command `wget` is not supported. Cannot download the Sentiment140 dataset")
-                if subprocess.call(["wget", url]) != 0 or not hasfile(arc):
+                download(url, arc)
+                if not hasfile(arc):
                     raise Exception("Failed to download the Sentiment140 dataset.")
-            if not hascmd("unzip"):
-                raise Exception("Command `unzip` is not supported. Cannot unarchive the Sentiment140 dataset")
-            if subprocess.call(["unzip", arc]) != 0 or not hasfile(train) or not hasfile(test):
+            with zipfile.ZipFile(arc, "r") as zip:
+                zip.extractall(".")
+            if not hasfile(train) or not hasfile(test):
                 raise Exception("Failed to unarchive the Sentiment140 dataset.")
             rmfile(arc)
         self.train_path = os.path.abspath(train)
         self.test_path = os.path.abspath(test)
+        os.chdir(cur_dir)
