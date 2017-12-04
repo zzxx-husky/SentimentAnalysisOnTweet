@@ -8,6 +8,6 @@ def printdata(tweet):
 
 
 if __name__ == '__main__':
-    config = Config.parse("saot.config")
+    config = Config.parse("../saot.config")
     downloader = Downloader(config)
     downloader.start_searching(["alphago zero"], Listener(printdata))

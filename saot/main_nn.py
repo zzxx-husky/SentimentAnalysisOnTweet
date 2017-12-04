@@ -2,7 +2,7 @@ import cPickle as pk
 
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.svm import LinearSVC
+from nn import NeuralNetwork
 
 from cleaner import Cleaner
 from config import Config
@@ -35,18 +35,11 @@ if __name__ == '__main__':
     print('Number of features: %i' % len(tfidf.vocabulary_))
     print('\t%i words are pruned.\n' % len(tfidf.stop_words_))
 
-    try:
-        with open("svm.pkl", "rb") as bin:
-            svm = pk.load(bin)
-        print "Successfully loaded svm model"
-    except:
-        svm = LinearSVC(dual=False, C=1.0)
-        svm.fit(X_train, y_train)
-        with open("svm.pkl", "wb") as bin:
-            pk.dump(svm, bin)
-    predicted_train = svm.predict(tfidf.transform(data_train))
+    net = NeuralNetwork(len(tfidf.vocabulary_), 2)
+    net.train(input = data_train, groundtruth = y_train)
+    predicted_train = net.predict(tfidf.transform(data_train))
     print('Accuracy: %f' % np.mean(predicted_train == y_train))
-    predicted_test = svm.predict(tfidf.transform(data_test))
+    predicted_test = net.predict(tfidf.transform(data_test))
     print('Accuracy: %f' % np.mean(predicted_test == y_test))
 
     visual = Visualizer(table_names=["summary", "percentage"])
