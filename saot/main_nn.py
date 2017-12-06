@@ -1,17 +1,27 @@
 import cPickle as pk
 
 import numpy as np
+import torch
 from sklearn.model_selection import train_test_split
-from nn import NeuralNetwork
 
 from cleaner import Cleaner
 from config import Config
 from data_loader import Dataset
 from downloader import Downloader
 from listener import Listener
+from nn import NeuralNetwork
 from sentiment140 import Sentiment140
 from tfidf import TFIDF
 from visualizer import Visualizer
+
+
+def to_torch_sparse_tensor(M):
+    """Convert Scipy sparse matrix to torch sparse tensor."""
+    M = M.tocoo().astype(np.float32)
+    indices = torch.from_numpy(np.vstack((M.row, M.col))).long()
+    values = torch.from_numpy(M.data)
+    shape = torch.Size(M.shape)
+    return torch.sparse.FloatTensor(indices, values, shape)
 
 if __name__ == '__main__':
     ds = Dataset.load_data(Sentiment140().train_path)
@@ -36,21 +46,22 @@ if __name__ == '__main__':
     print('\t%i words are pruned.\n' % len(tfidf.stop_words_))
 
     net = NeuralNetwork(len(tfidf.vocabulary_), 2)
-    net.train(input = data_train, groundtruth = y_train)
-    predicted_train = net.predict(tfidf.transform(data_train))
+    net.train(input=to_torch_sparse_tensor(X_train), groundtruth=torch.FloatTensor(y_train))
+    predicted_train = net.eval(X_train)
     print('Accuracy: %f' % np.mean(predicted_train == y_train))
-    predicted_test = net.predict(tfidf.transform(data_test))
+    predicted_test = net.eval(tfidf.transform(data_test))
     print('Accuracy: %f' % np.mean(predicted_test == y_test))
 
     visual = Visualizer(table_names=["summary", "percentage"])
     pos, neg, summ_cnt = 0, 0, 0
+
 
     def consume(tweet):
         global summ_cnt, pos, neg
         clean = Cleaner.clean(tweet.full_text)
         if clean is not None:
             tran = tfidf.transform([clean])
-            pred = svm.predict(tran)
+            pred = net.predict(tran)
             print pred, tweet.full_text
 
             summ_cnt += 1

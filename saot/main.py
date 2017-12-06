@@ -58,7 +58,7 @@ if __name__ == '__main__':
         if clean is not None:
             tran = tfidf.transform([clean])
             pred = svm.predict(tran)
-            print pred, tweet.full_text
+            print pred, tweet.full_text.encode('utf-8')
 
             summ_cnt += 1
             if pred == 4: pos += 1

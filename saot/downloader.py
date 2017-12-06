@@ -29,7 +29,7 @@ class Downloader:
                         time.sleep(5)
                     else:
                         print "Exception caught: " + str(e) + ". Stopping twitter searching."
-                        break
+                        time.sleep(60)
 
         threading.Thread(target=listen).start()
 

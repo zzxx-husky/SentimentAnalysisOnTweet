@@ -11,5 +11,8 @@ class TFIDF(TfidfVectorizer):
 
     @staticmethod
     def build(min_df=2, max_df=0.95, stop_words=ENGLISH_STOP_WORDS):
-        return TFIDF(min_df=min_df, max_df=max_df, stop_words=stop_words, norm='l2',
+        return TFIDF(min_df=min_df,
+                     max_df=max_df,
+                     stop_words=stop_words,
+                     norm='l2',
                      sublinear_tf=True)
